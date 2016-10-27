@@ -6,8 +6,8 @@ include __DIR__ . '/autoload.php';
 
 if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
 
-    $timeLimit = 60 * 60 * 0;
-    $db = \TestTask\Main::setConnection($config);
+    $timeLimit = 60 * 60 * 24; // ограничение регистрации для IP - раз в сутки
+    $db = \TestTask\Main::setConnection($config); // коннект к базе
 
     $reg = new \TestTask\Registration($db);
     $auth = new \TestTask\Auth($db);
@@ -19,12 +19,14 @@ if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
         exit();
     }
 
+    // проверка - разрешена ли регистрация для этого айпи
     if (!$ipChecker->isIpAllowed($_SERVER['REMOTE_ADDR'], time(), $timeLimit)) {
         $msg = 'Регистрация с этого IP-адреса временно запрещена.';
         echo json_encode(array(false, array($msg)));
         exit();
     }
 
+    // передача параметров для дальнейшей записи в базу
     $login = $reg->setLogin($_POST['login']);
     $password = $reg->setPassword($_POST['psw']);
     $reg->setRemoteAddr($_SERVER['REMOTE_ADDR']);
@@ -45,6 +47,7 @@ if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
         $reg->setAbout($_POST['about']);
     }
 
+    // если есть ошибки, выводим их. Иначе завершаем регистрацию и логинимся
     if ($reg->hasAlerts()) {
         echo json_encode(array(false, $reg->getAlerts()));
     } else {

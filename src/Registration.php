@@ -2,13 +2,25 @@
 
 namespace TestTask;
 
-
+/**
+ * Class Registration
+ * 
+ * Класс, осуществляющий регистрацию - проверку пользовательских данных и последующую их запись в базу данных.
+ * 
+ * @package TestTask
+ */
 class Registration extends Main
 {
+    /**
+     * Регулярное выражение для проверки валидности логина и пароля
+     */
     const LOGPSW_VALID = '#^[a-zA-Z0-9]{3,15}$#';
 
+    /**
+     * @var array ошибки выполнения и предупреждения
+     */
     private $alerts = [];
-
+    
     private $login = '';
     private $password = '';
     private $email = '';
@@ -17,7 +29,12 @@ class Registration extends Main
     private $gender = '';
     private $remoteAddr = '';
 
-
+    /**
+     * Проверяет и устанавливает логин
+     * 
+     * @param string $login
+     * @return string
+     */
     public function setLogin($login)
     {
         $this->validEmpty($login, 'Поле "Логин" обязательно для заполнения');
@@ -29,6 +46,11 @@ class Registration extends Main
         return $login;
     }
 
+    /**
+     * Проверяет, использовался логин ранее
+     * 
+     * @param string $login
+     */
     private function validLoginExists($login)
     {
         $preReq = $this->db->prepare("SELECT COUNT(login) FROM testtask WHERE login=?");
@@ -39,6 +61,12 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Проверяет и устанавливает пароль
+     * 
+     * @param string $psw
+     * @return string
+     */
     public function setPassword($psw)
     {
         $this->validEmpty($psw, 'Поле "Пароль" обязательно для заполнения');
@@ -49,6 +77,11 @@ class Registration extends Main
         return $psw;
     }
 
+    /**
+     * Проверяет и устанавливает email
+     * 
+     * @param string $email
+     */
     public function setEmail($email)
     {
         $emailValid = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -59,6 +92,11 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Проверяет и устанавливает пол
+     * 
+     * @param string $gender
+     */
     public function setGender($gender)
     {
         switch ($gender) {
@@ -77,6 +115,11 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Проверяет и устанавливает имя
+     * 
+     * @param string $name
+     */
     public function setName($name)
     {
         if (strlen($name) < 60) {
@@ -86,6 +129,11 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Проверяет и устанавливает описание
+     * 
+     * @param string $about
+     */
     public function setAbout($about)
     {
         if (strlen($about) < 500) {
@@ -95,11 +143,21 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Устанавливает IP пользователя
+     * 
+     * @param string $ip
+     */
     public function setRemoteAddr($ip)
     {
         $this->remoteAddr = $ip;
     }
 
+    /**
+     * Проверяет, возникали ли ошибки
+     * 
+     * @return bool
+     */
     public function hasAlerts()
     {
         if (count($this->alerts) > 0) {
@@ -109,11 +167,23 @@ class Registration extends Main
         }
     }
 
+    /**
+     * Возвращает массив возникших ошибок
+     * 
+     * @return array
+     */
     public function getAlerts()
     {
         return $this->alerts;
     }
 
+    /**
+     * Завершение регистрации
+     * 
+     * Записывает все данные в базу данных
+     * 
+     * @return bool
+     */
     public function completeReg()
     {
         $timeNow = time();
@@ -132,6 +202,15 @@ class Registration extends Main
         return true;
     }
 
+    /**
+     * Проверка на наличие значения
+     * 
+     * Если первым параметром передано пустое значение, 
+     * то добавляет ошибку с текстом, содержащимся во втором параметре
+     * 
+     * @param $string
+     * @param $msg
+     */
     private function validEmpty($string, $msg)
     {
         if (empty($string)) {

@@ -1,5 +1,6 @@
 <?php
 
+// автозагрузка классов. В принципе, можно было и через композер сделать 
 require_once __DIR__ . '/src/Main.php';
 
 require_once __DIR__ . '/src/Auth.php';

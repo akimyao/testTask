@@ -1,25 +1,32 @@
 <?php
 session_start();
+
 $config = __DIR__ . '/db/config.php';
 require_once __DIR__ . '/autoload.php';
 
-$db = \TestTask\Main::setConnection($config);
-$auth = new \TestTask\Auth($db);
-$auth->setCsrf();
+$db = \TestTask\Main::setConnection($config); // соединение с базой
+
+$auth = new \TestTask\Auth($db); //класс для работы с юзером
+$auth->setCsrf(); // устанавливаем токен
 
 $message = '';
 
 $allowToken = isset($_POST['csrf']) && $auth->isCsrfValid($_POST['csrf']);
 
+// обрабатываем POST-запросы если валидный токен
 if ($allowToken) {
+    
+    // выход
     if (isset($_POST['out'])) {
         $auth->signOut();
     }
 
+    // вход
     if (isset($_POST['signin']) && isset($_POST['login']) && isset($_POST['pass'])) {
         $message .= $auth->signIn($_POST['login'], $_POST['pass']);
     }
 
+    // передача сообщений
     if (isset($_POST['suc_msg'])) {
         $message .= \TestTask\HtmlHelper::generateSuccess($_POST['suc_msg']);
     }
@@ -37,6 +44,7 @@ if ($allowToken) {
 <?= $message ?>
 <div class="box" id="main-box">
     <?php
+    // если юзер залогинился -- выводим приветсвие, в противном случае -- форму входа и регистрации
     if ($auth->isAuth()) {
         echo 'Здравствуйте, ' . htmlspecialchars($_SESSION['login']) . "!";
         ?>
@@ -95,6 +103,7 @@ if ($allowToken) {
 
 
 <?php
+// если пользователь залогинился, -- выводим простенькую табличку с юзерами
 if ($auth->isAuth()) {
     echo $auth->createTable();
 }
