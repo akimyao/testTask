@@ -3,21 +3,24 @@ session_start();
 $config = __DIR__ . '/db/config.php';
 require_once __DIR__ . '/autoload.php';
 
-$auth = new \TestTask\Auth($config);
+$db = \TestTask\Main::setConnection($config);
+$auth = new \TestTask\Auth($db);
+$auth->setCsrf();
+
 $message = '';
 
 if(isset($_POST['out']) && isset($_POST['csrf'])) {
+    $auth->signOut($_POST['csrf']);
+}
+
+if(isset($_POST['signin']) && isset($_POST['login']) && isset($_POST['pass']) && isset($_POST['csrf'])) {
+    $message .= $auth->signIn($_POST['login'], $_POST['pass'], $_POST['csrf']);
+}
+
+if(isset($_POST['suc_msg']) && isset($_POST['csrf'])) {
     if ($auth->isCsrfValid($_POST['csrf'])) {
-        $auth->signOut();
+        $message .= \TestTask\HtmlHelper::generateSuccess($_POST['suc_msg']);
     }
-}
-
-if(isset($_POST['signin']) && isset($_POST['login']) && isset($_POST['pass'])) {
-    $message .= $auth->signIn($_POST['login'], $_POST['pass']);
-}
-
-if(isset($_POST['suc_msg'])) {
-    $message .= \TestTask\HtmlHelper::generateSuccess($_POST['suc_msg']);
 }
 
 ?>
@@ -37,7 +40,7 @@ if(isset($_POST['suc_msg'])) {
         ?>
 
         <form action="" method="post">
-            <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
+            <input type="hidden" name="csrf" value="<?= $_COOKIE['csrf'] ?>">
             <button type="submit" name="out" value="true">Выйти</button>
         </form>
 
@@ -45,7 +48,7 @@ if(isset($_POST['suc_msg'])) {
     } else {
     ?>
 
-    <div id="regform">
+    <div id="regform" style="display: none">
         <h2>Регистрация (<a href="#" id="changeFormToLog">Уже зарегестрированы?</a>)</h2>
         <p>* - обязательно для заполнения.</p>
         <form id="reg_form">
@@ -65,6 +68,7 @@ if(isset($_POST['suc_msg'])) {
             <input type="text" id="name" name="name"><br><br>
             Немного о себе:<br>
             <textarea name="about" id="about" rows="10" cols="30"></textarea><br><br>
+            <input type="hidden" name="csrf" id="csrf" value="<?= $_COOKIE['csrf'] ?>">
             <input type="button" id="signup" value="Регистрация">
         </form>
     </div>
@@ -73,6 +77,7 @@ if(isset($_POST['suc_msg'])) {
         <form action="" method="post">
                 <input name="login" type="text" size="15" maxlength="15" placeholder="Логин">
                 <input name="pass" type="password" size="15" maxlength="15" placeholder="Пароль">
+                <input type="hidden" name="csrf" value="<?= $_COOKIE['csrf'] ?>">
                 <input type="submit" name="signin" value="Войти">
                 <br>
         </form>

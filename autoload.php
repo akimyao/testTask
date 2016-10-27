@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/src/Connection.php';
+require_once __DIR__ . '/src/Main.php';
 
 require_once __DIR__ . '/src/Auth.php';
 require_once __DIR__ . '/src/Registration.php';

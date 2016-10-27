@@ -3,7 +3,7 @@
 namespace TestTask;
 
 
-class Registration extends Connection
+class Registration extends Main
 {
     const LOGPSW_VALID_OPTS = array('options'=>array('regexp'=>'#[a-zA-Z0-9]{3,15}#'));
 
@@ -29,7 +29,6 @@ class Registration extends Connection
         $this->login = $login;
     }
 
-    //не работает :(
     private function validLoginExists($login)
     {
         $preReq = $this->db->prepare("SELECT COUNT(login) FROM testtask WHERE login=?");
@@ -73,7 +72,7 @@ class Registration extends Connection
                 $this->gender = 'female';
                 break;
             default:
-                $this->alerts[] = 'Недопустимое значение для поля "Пол" - '.$gender;
+                $this->alerts[] = 'Недопустимое значение для поля "Пол".';
                 break;
         }
     }

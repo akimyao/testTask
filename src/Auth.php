@@ -2,43 +2,49 @@
 
 namespace TestTask;
 
-class Auth extends Connection
+class Auth extends Main
 {
-    public function signIn($login, $password)
+    public function signIn($login, $password, $csrf)
     {
-        if($this->checkPassword($login, $password)) {
-            $_SESSION['is_set'] = true;
+        if($this->checkPassword($login, $password) && $this->isCsrfValid($csrf)) {
+            $_SESSION['exists'] = true;
             $_SESSION['login'] = $login;
-            $_SESSION['csrf'] = $this->generateCsrfToken();
             return '';
         } else {
-            $alert = 'Неверный логин или пароль';
+            $alert = 'Ошибка авторизации. Попробуйте ещё раз.';
             return HtmlHelper::generateAlert($alert);
         }
     }
 
-    public function signOut()
+    public function signOut($csrf)
     {
-        $_SESSION = array();
-        session_destroy();
+        if ($this->isCsrfValid($csrf)) {
+            $_SESSION = array();
+            session_destroy();
+        }
     }
 
     public function isAuth()
     {
-        if (isset($_SESSION['is_set'])) {
-            return true;
-        } else {
-            return false;
+        return isset($_SESSION['exists']);
+    }
+
+    public function setCsrf()
+    {
+        if (!$this->csrfExists()) {
+            $csrf = $this->generateCsrfToken();
+            setcookie("csrf", $csrf, time() + (60 * 60 * 24), "/"); // сутки
         }
     }
     
     public function isCsrfValid($token)
     {
-        if ($token == $_SESSION['csrf']) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->csrfExists() && $token == $_COOKIE['csrf'];
+    }
+
+    private function csrfExists()
+    {
+        return isset($_COOKIE['csrf']) && !empty($_COOKIE['csrf']);
     }
 
     private function checkPassword($login, $psw)
@@ -52,5 +58,34 @@ class Auth extends Connection
     private function generateCsrfToken()
     {
         return substr(md5(rand()), 0, 25);
+    }
+
+    public function createTable()
+    {
+        $tableHead = '';
+        $tableHead .= HtmlHelper::setTagWith('td', 'ID');
+        $tableHead .= HtmlHelper::setTagWith('td', 'Login');
+        $tableHead .= HtmlHelper::setTagWith('td', 'Gender');
+        $tableHead .= HtmlHelper::setTagWith('td', 'IP');
+        $tableHead .= HtmlHelper::setTagWith('td', 'Reg.Time');
+
+        $tableHead = HtmlHelper::setTagWith('tr', $tableHead);
+        $tableHead = HtmlHelper::setTagWith('thead', $tableHead);
+
+        $lines = '';
+        $preReq = $this->db->query("SELECT id, login, gender, regip, regtime from testtask ORDER BY id DESC");
+        $preReq->setFetchMode(\PDO::FETCH_LAZY);
+        while ($row = $preReq->fetch()) {
+            $line = '';
+            $line .= HtmlHelper::setTagWith('td', $row['id']);
+            $line .= HtmlHelper::setTagWith('td', $row['login']);
+            $line .= HtmlHelper::setTagWith('td', $row['gender']);
+            $line .= HtmlHelper::setTagWith('td', $row['regip']);
+            $line .= HtmlHelper::setTagWith('td', $row['regtime']);
+
+            $lines .= HtmlHelper::setTagWith('tr', $line);
+        }
+
+        return HtmlHelper::setTagWith('table', $tableHead . $lines);
     }
 }

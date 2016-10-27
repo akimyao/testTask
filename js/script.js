@@ -19,6 +19,8 @@ $(document).ready(function(){
         var gender = $('#gender').val();
         var about = $.trim($('#about').val());
         var name = $.trim($('#name').val());
+
+        var csrf = $.trim($('#csrf').val());
         
         $.ajax({
             type: 'POST',
@@ -28,7 +30,8 @@ $(document).ready(function(){
                 gender: gender,
                 about: about,
                 name: name,
-                email: email
+                email: email,
+                csrf: csrf
             },
             error: function(req, text, error) {
                 alert('AJAX error: ' + text + ' | ' + error);
@@ -46,6 +49,7 @@ $(document).ready(function(){
                         '<input type="hidden" name="login" value="'+userLog+'">' +
                         '<input type="hidden" name="suc_msg" value="'+data[1][0]+'">' +
                         '<input type="hidden" name="pass" value="'+userPas+'">' +
+                        '<input type="hidden" name="csrf" value="'+csrf+'">' +
                         '<input type="hidden" name="signin" value="true">' +
                         '</form>');
                     $('body').append(form);
@@ -55,9 +59,4 @@ $(document).ready(function(){
             dataType: 'json'
         });
     });
-});
-$(document).ready(function () {
-    $("#regform").hide();
-    $("#logform").show();
-    return false;
 });

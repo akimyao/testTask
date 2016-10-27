@@ -3,7 +3,7 @@
 namespace TestTask;
 
 
-class IpAddrChecker extends Connection
+class IpAddrChecker extends Main
 {
     public function isIpAllowed($ip, $time, $timeLimit)
     {
