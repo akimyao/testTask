@@ -18,14 +18,14 @@ class HtmlHelper
         $post = '</p></div>';
         return $pre . $msg . $post;
     }
-    
+
     public static function setTagWith($tag, $innerHtml, $classContent = '')
     {
         $class = '';
         if (!empty($classContent)) {
             $class = " class=\"$classContent\"";
         }
-            
+
         return "<$tag" . "$class>" . $innerHtml . "</$tag>";
     }
 }

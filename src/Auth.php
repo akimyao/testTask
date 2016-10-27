@@ -6,7 +6,7 @@ class Auth extends Main
 {
     public function signIn($login, $password, $csrf)
     {
-        if($this->checkPassword($login, $password) && $this->isCsrfValid($csrf)) {
+        if ($this->checkPassword($login, $password) && $this->isCsrfValid($csrf)) {
             $_SESSION['exists'] = true;
             $_SESSION['login'] = $login;
             return '';
@@ -36,7 +36,7 @@ class Auth extends Main
             setcookie("csrf", $csrf, time() + (60 * 60 * 24), "/"); // сутки
         }
     }
-    
+
     public function isCsrfValid($token)
     {
         return $this->csrfExists() && $token == $_COOKIE['csrf'];

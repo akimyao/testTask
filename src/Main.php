@@ -11,13 +11,13 @@ class Main
     {
         $this->db = $db;
     }
-    
+
     public function getConnection()
     {
         return $this->db;
     }
-    
-    public static function setConnection($config, $host='localhost',$dbname='',$user='',$pass='')
+
+    public static function setConnection($config, $host = 'localhost', $dbname = '', $user = '', $pass = '')
     {
         include $config;
 

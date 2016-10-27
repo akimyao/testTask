@@ -5,7 +5,7 @@ namespace TestTask;
 
 class Registration extends Main
 {
-    const LOGPSW_VALID_OPTS = array('options'=>array('regexp'=>'#[a-zA-Z0-9]{3,15}#'));
+    const LOGPSW_VALID_OPTS = array('options' => array('regexp' => '#[a-zA-Z0-9]{3,15}#'));
 
     private $alerts = [];
 
@@ -23,7 +23,7 @@ class Registration extends Main
         $logValid = filter_var($login, FILTER_VALIDATE_REGEXP, self::LOGPSW_VALID_OPTS);
         $this->validEmpty($login, 'Поле "Логин" обязательно для заполнения');
         $this->validLoginExists($login);
-        if($login != $logValid){
+        if ($login != $logValid) {
             $this->alerts[] = 'Логин должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
         }
         $this->login = $login;
@@ -43,7 +43,7 @@ class Registration extends Main
     {
         $pswValid = filter_var($psw, FILTER_VALIDATE_REGEXP, self::LOGPSW_VALID_OPTS);
         $this->validEmpty($psw, 'Поле "Пароль" обязательно для заполнения');
-        if($psw != $pswValid){
+        if ($psw != $pswValid) {
             $this->alerts[] = 'Пароль должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
         }
         $this->password = password_hash($psw, PASSWORD_BCRYPT);;
@@ -52,7 +52,7 @@ class Registration extends Main
     public function setEmail($email)
     {
         $emailValid = filter_var($email, FILTER_VALIDATE_EMAIL);
-        if($emailValid == $email) {
+        if ($emailValid == $email) {
             $this->email = $email;
         } else {
             $this->alerts[] = 'Некорректный e-mail.';
@@ -61,7 +61,7 @@ class Registration extends Main
 
     public function setGender($gender)
     {
-        switch ($gender){
+        switch ($gender) {
             case 'other':
                 $this->gender = 'other';
                 break;
@@ -88,7 +88,7 @@ class Registration extends Main
 
     public function setAbout($about)
     {
-        if(strlen($about) < 500) {
+        if (strlen($about) < 500) {
             $this->about = $about;
         } else {
             $this->alerts[] = 'Недопустимое значение поля "О себе". Ограничение - 500 символов.';
@@ -113,7 +113,8 @@ class Registration extends Main
         }
     }
 
-    public function isAlerts() {
+    public function isAlerts()
+    {
         if (count($this->alerts) > 0) {
             return true;
         } else {
@@ -121,11 +122,13 @@ class Registration extends Main
         }
     }
 
-    public function getAlerts() {
+    public function getAlerts()
+    {
         return $this->alerts;
     }
 
-    public function completeReg() {
+    public function completeReg()
+    {
         $timeNow = time();
         $info = array($this->login,
             $this->password,
@@ -135,18 +138,17 @@ class Registration extends Main
             $this->remoteAddr,
             $timeNow
         );
-        
+
         $preReq = $this->db->prepare("INSERT INTO testtask (login, password, gender, name, about, regip, regtime)"
-                                    ." VALUES (?, ?, ?, ?, ?, ?, ?)");
+            . " VALUES (?, ?, ?, ?, ?, ?, ?)");
         $preReq->execute($info);
         return 'Регистрация успешно завершена.';
     }
 
     private function validEmpty($string, $msg)
     {
-        if(empty($string)) {
+        if (empty($string)) {
             $this->alerts[] = $msg;
         }
     }
-
 }
