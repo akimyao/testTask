@@ -46,15 +46,8 @@ $(document).ready(function () {
                         $('#alerts').append('<p class="alert-msg">' + data[1][i] + '</p>');
                     }
                 } else {
-                    var form = $('<form action="" method="post">' +
-                        '<input type="hidden" name="login" value="' + userLog + '">' +
-                        '<input type="hidden" name="suc_msg" value="' + data[1][0] + '">' +
-                        '<input type="hidden" name="pass" value="' + userPas + '">' +
-                        '<input type="hidden" name="csrf" value="' + csrf + '">' +
-                        '<input type="hidden" name="signin" value="true">' +
-                        '</form>');
-                    $('body').append(form);
-                    form.submit();
+                    $('#suc_msg').attr('value', data[1]);
+                    $('#message').submit();
                 }
             },
             dataType: 'json'

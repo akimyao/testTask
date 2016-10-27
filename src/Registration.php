@@ -5,7 +5,7 @@ namespace TestTask;
 
 class Registration extends Main
 {
-    const LOGPSW_VALID_OPTS = array('options' => array('regexp' => '#[a-zA-Z0-9]{3,15}#'));
+    const LOGPSW_VALID = '#^[a-zA-Z0-9]{3,15}$#';
 
     private $alerts = [];
 
@@ -20,13 +20,13 @@ class Registration extends Main
 
     public function setLogin($login)
     {
-        $logValid = filter_var($login, FILTER_VALIDATE_REGEXP, self::LOGPSW_VALID_OPTS);
         $this->validEmpty($login, 'Поле "Логин" обязательно для заполнения');
         $this->validLoginExists($login);
-        if ($login != $logValid) {
+        if (!preg_match(self::LOGPSW_VALID, $login)) {
             $this->alerts[] = 'Логин должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
         }
         $this->login = $login;
+        return $login;
     }
 
     private function validLoginExists($login)
@@ -41,12 +41,12 @@ class Registration extends Main
 
     public function setPassword($psw)
     {
-        $pswValid = filter_var($psw, FILTER_VALIDATE_REGEXP, self::LOGPSW_VALID_OPTS);
         $this->validEmpty($psw, 'Поле "Пароль" обязательно для заполнения');
-        if ($psw != $pswValid) {
+        if (!preg_match(self::LOGPSW_VALID, $psw)) {
             $this->alerts[] = 'Пароль должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
         }
         $this->password = password_hash($psw, PASSWORD_BCRYPT);;
+        return $psw;
     }
 
     public function setEmail($email)
@@ -100,20 +100,7 @@ class Registration extends Main
         $this->remoteAddr = $ip;
     }
 
-    public function isSetNotEmpty($string)
-    {
-        if (isset($string)) {
-            if (!empty($string)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public function isAlerts()
+    public function hasAlerts()
     {
         if (count($this->alerts) > 0) {
             return true;
@@ -142,7 +129,7 @@ class Registration extends Main
         $preReq = $this->db->prepare("INSERT INTO testtask (login, password, gender, name, about, regip, regtime)"
             . " VALUES (?, ?, ?, ?, ?, ?, ?)");
         $preReq->execute($info);
-        return 'Регистрация успешно завершена.';
+        return true;
     }
 
     private function validEmpty($string, $msg)

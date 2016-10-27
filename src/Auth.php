@@ -4,9 +4,9 @@ namespace TestTask;
 
 class Auth extends Main
 {
-    public function signIn($login, $password, $csrf)
+    public function signIn($login, $password)
     {
-        if ($this->checkPassword($login, $password) && $this->isCsrfValid($csrf)) {
+        if ($this->checkPassword($login, $password)) {
             $_SESSION['exists'] = true;
             $_SESSION['login'] = $login;
             return '';
@@ -16,12 +16,12 @@ class Auth extends Main
         }
     }
 
-    public function signOut($csrf)
+    public function signOut()
     {
-        if ($this->isCsrfValid($csrf)) {
-            $_SESSION = array();
-            session_destroy();
-        }
+
+        $_SESSION = array();
+        session_destroy();
+
     }
 
     public function isAuth()
@@ -81,7 +81,7 @@ class Auth extends Main
             $line .= HtmlHelper::setTagWith('td', $row['login']);
             $line .= HtmlHelper::setTagWith('td', $row['gender']);
             $line .= HtmlHelper::setTagWith('td', $row['regip']);
-            $line .= HtmlHelper::setTagWith('td', $row['regtime']);
+            $line .= HtmlHelper::setTagWith('td', date('d F Y H:i', $row['regtime']));
 
             $lines .= HtmlHelper::setTagWith('tr', $line);
         }

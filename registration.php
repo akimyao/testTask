@@ -1,11 +1,12 @@
 <?php
+session_start();
 
 $config = __DIR__ . '/db/config.php';
 include __DIR__ . '/autoload.php';
 
 if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
 
-    $timeLimit = 60 * 60;
+    $timeLimit = 60 * 60 * 0;
     $db = \TestTask\Main::setConnection($config);
 
     $reg = new \TestTask\Registration($db);
@@ -24,30 +25,32 @@ if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
         exit();
     }
 
-    $reg->setLogin($_POST['login']);
-    $reg->setPassword($_POST['psw']);
+    $login = $reg->setLogin($_POST['login']);
+    $password = $reg->setPassword($_POST['psw']);
     $reg->setRemoteAddr($_SERVER['REMOTE_ADDR']);
 
-    if ($reg->isSetNotEmpty($_POST['email'])) {
+    if (!empty($_POST['email'])) {
         $reg->setEmail($_POST['email']);
     }
 
-    if ($reg->isSetNotEmpty($_POST['gender'])) {
+    if (!empty($_POST['gender'])) {
         $reg->setGender($_POST['gender']);
     }
 
-    if ($reg->isSetNotEmpty($_POST['name'])) {
+    if (!empty($_POST['name'])) {
         $reg->setName($_POST['name']);
     }
 
-    if ($reg->isSetNotEmpty($_POST['about'])) {
+    if (!empty($_POST['about'])) {
         $reg->setAbout($_POST['about']);
     }
 
-    if ($reg->isAlerts()) {
+    if ($reg->hasAlerts()) {
         echo json_encode(array(false, $reg->getAlerts()));
     } else {
-        $response = $reg->completeReg();
-        echo json_encode(array(true, array($response)));
+        $reg->completeReg();
+        $dl = $auth->signIn($login, $password);
+        $msg = 'Регистрация завершена.'.$dl;
+        echo json_encode(array(true, $msg));
     }
 }

@@ -9,16 +9,18 @@ $auth->setCsrf();
 
 $message = '';
 
-if (isset($_POST['out']) && isset($_POST['csrf'])) {
-    $auth->signOut($_POST['csrf']);
-}
+$allowToken = isset($_POST['csrf']) && $auth->isCsrfValid($_POST['csrf']);
 
-if (isset($_POST['signin']) && isset($_POST['login']) && isset($_POST['pass']) && isset($_POST['csrf'])) {
-    $message .= $auth->signIn($_POST['login'], $_POST['pass'], $_POST['csrf']);
-}
+if ($allowToken) {
+    if (isset($_POST['out'])) {
+        $auth->signOut();
+    }
 
-if (isset($_POST['suc_msg']) && isset($_POST['csrf'])) {
-    if ($auth->isCsrfValid($_POST['csrf'])) {
+    if (isset($_POST['signin']) && isset($_POST['login']) && isset($_POST['pass'])) {
+        $message .= $auth->signIn($_POST['login'], $_POST['pass']);
+    }
+
+    if (isset($_POST['suc_msg'])) {
         $message .= \TestTask\HtmlHelper::generateSuccess($_POST['suc_msg']);
     }
 }
@@ -36,7 +38,7 @@ if (isset($_POST['suc_msg']) && isset($_POST['csrf'])) {
 <div class="box" id="main-box">
     <?php
     if ($auth->isAuth()) {
-        echo 'Здравствуйте, ' . $_SESSION['login'] . "!";
+        echo 'Здравствуйте, ' . htmlspecialchars($_SESSION['login']) . "!";
         ?>
 
         <form action="" method="post">
@@ -82,6 +84,10 @@ if (isset($_POST['suc_msg']) && isset($_POST['csrf'])) {
                 <br>
             </form>
         </div>
+        <form action="" id="message" method="post">
+            <input type="hidden" id="suc_msg" name="suc_msg">
+            <input type="hidden" name="csrf" value="<?= $_COOKIE['csrf'] ?>">
+        </form>
         <?php
     }
     ?>
