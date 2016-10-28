@@ -70,16 +70,16 @@ if ($allowToken) {
                 <input type="text" id="email" name="email"><br><br>
                 <label for="gender">Пол:</label><br>
                 <select id="gender" name="gender">
+                    <option value="other" selected>Не указано</option>
                     <option value="male">Мужской</option>
                     <option value="female">Женский</option>
-                    <option value="other" selected>Не указано</option>
                 </select><br><br>
                 <label for="name">Полное имя:</label><br>
                 <input type="text" id="name" name="name"><br><br>
                 <label for="about">Немного о себе:</label><br>
                 <textarea name="about" id="about" rows="10" cols="30"></textarea><br><br>
                 <input type="hidden" name="csrf" id="csrf" value="<?= $currentCsrf ?>">
-                <input type="button" id="signup" value="Регистрация">
+                <input type="submit" id="signup" value="Регистрация">
             </form>
         </div>
         <div id="logform">

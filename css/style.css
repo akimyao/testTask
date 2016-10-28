@@ -1,3 +1,7 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
 .box {
     position: relative;
     background: #FFF;
@@ -21,6 +25,10 @@
 
 input, textarea, select {
     width: 20%;
+}
+
+div#logform input {
+    width: 10%;
 }
 
 .alert-msg, .success-msg {
@@ -51,6 +59,6 @@ tr:nth-child(even) {
 
 a {
     background: 0 0;
-    color: #6699ff;
+    color: #2a5885;
     text-decoration: none;
 }
