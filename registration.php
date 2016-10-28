@@ -6,7 +6,7 @@ include __DIR__ . '/autoload.php';
 
 if (isset($_POST['login']) && isset($_POST['psw']) && isset($_POST['csrf'])) {
 
-    $timeLimit = 60 * 60 * 24; // ограничение регистрации для IP - раз в 10 минут
+    $timeLimit = 60 * 10; // ограничение регистрации для IP - раз в 10 минут
     $db = \TestTask\Main::setConnection($config); // коннект к базе
 
     $reg = new \TestTask\Registration($db);
