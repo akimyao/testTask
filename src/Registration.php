@@ -40,7 +40,7 @@ class Registration extends Main
         $this->validEmpty($login, 'Поле "Логин" обязательно для заполнения');
         $this->validLoginExists($login);
         if (!preg_match(self::LOGPSW_VALID, $login)) {
-            $this->alerts[] = 'Логин должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
+            $this->alerts[] = 'Логин должен быть от 3 до 15 символов и содержать только цифры или латиницу.';
         }
         $this->login = $login;
         return $login;
@@ -71,7 +71,7 @@ class Registration extends Main
     {
         $this->validEmpty($psw, 'Поле "Пароль" обязательно для заполнения');
         if (!preg_match(self::LOGPSW_VALID, $psw)) {
-            $this->alerts[] = 'Пароль должен быть от 3 до 15 символов и содержать только цифры и латиницу.';
+            $this->alerts[] = 'Пароль должен быть от 3 до 15 символов и содержать только цифры или латиницу.';
         }
         $this->password = password_hash($psw, PASSWORD_BCRYPT);;
         return $psw;

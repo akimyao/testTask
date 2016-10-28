@@ -49,15 +49,20 @@ class Auth extends Main
     }
 
     /**
-     * Инициализация CSRF-токена
+     * Получение и инициализация CSRF-токена
      *
-     * Устанавливает CSRF-токен на сутки в cookie, если тот не существует
+     * Устанавливает CSRF-токен на сутки в cookie, если тот не существует, и/либо возвращает его значение
+     * 
+     * @return string
      */
-    public function setCsrf()
+    public function getCsrf()
     {
         if (!$this->csrfExists()) {
             $csrf = $this->generateCsrfToken();
             setcookie("csrf", $csrf, time() + (60 * 60 * 24), "/"); // сутки
+            return $csrf;
+        } else {
+            return $_COOKIE['csrf'];
         }
     }
 
